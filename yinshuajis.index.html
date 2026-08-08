@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1100,initial-scale=1,maximum-scale=3,minimum-scale=0.5,user-scalable=yes">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+:root{
+  --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;
+  --success:#059669;--success-bg:#d1fae5;--success-light:#ecfdf5;
+  --warn:#d97706;--danger:#dc2626;
+  --bg:#f1f5f9;--card:#ffffff;--text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--border-light:#f1f5f9;
+  --shadow-sm:0 1px 3px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --shadow:0 4px 16px rgba(15,23,42,.06),0 2px 6px rgba(15,23,42,.04);
+  --shadow-lg:0 10px 30px rgba(15,23,42,.08),0 4px 10px rgba(37,99,235,.04);
+  --radius:14px;--radius-sm:10px;--radius-lg:20px;
+}
+html{overflow-x:auto;}
+body{background:var(--bg);min-height:100vh;display:flex;color:var(--text);font-size:14px;line-height:1.5;}
+.left-nav{width:224px;background:var(--card);padding:28px 16px;box-shadow:2px 0 20px rgba(15,23,42,.05);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;z-index:100;flex-shrink:0;}
+.nav-brand{display:flex;align-items:center;gap:10px;padding:0 10px 22px;margin-bottom:18px;border-bottom:1px solid var(--border-light);}
+.nav-brand .logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:700;box-shadow:0 4px 12px rgba(37,99,235,.3);}
+.nav-brand .title{font-size:16px;font-weight:700;color:var(--text);}
+.nav-brand .sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;margin-bottom:6px;border:none;border-radius:var(--radius-sm);background:transparent;text-align:left;font-size:14px;cursor:pointer;transition:all .18s ease;color:var(--text2);font-weight:500;position:relative;}
+.nav-item .ico{font-size:16px;width:22px;text-align:center;}
+.nav-item:hover{background:#f8fafc;color:var(--text);}
+.nav-item.active{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-weight:600;box-shadow:0 4px 14px rgba(37,99,235,.35);}
+.nav-item.active::before{content:"";position:absolute;left:-16px;top:50%;transform:translateY(-50%);width:4px;height:22px;background:#fff;border-radius:0 4px 0;}
+.nav-footer{margin-top:auto;padding:14px 10px 0;border-top:1px solid var(--border-light);font-size:11px;color:var(--text3);text-align:center;}
+.main{flex:1;padding:25px 27px;min-width:0;}
+.wrap{width:700px;margin:0 auto;}
+.page{display:none;}
+.page.show{display:block;animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-head{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+.page-head .head-ico{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 6px 16px rgba(37,99,235,.28);}
+.page-head h2{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.3px;}
+.page-head p{font-size:13px;color:var(--text3);margin-top:2px;}
+.card{background:var(--card);border-radius:var(--radius-lg);padding:24px 26px;margin-bottom:18px;box-shadow:var(--shadow);border:1px solid rgba(226,232,240,.7);width:100%;}
+.card-title{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700;color:var(--text);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border-light);}
+.card-title .dot{width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 3px var(--primary-light);}
+.card-title .tag{margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--primary-light);color:var(--primary);}
+.row2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.row5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.row6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+.field{margin-bottom:4px;min-width:0;}
+.field label{display:flex;align-items:center;gap:5px;margin-bottom:7px;font-weight:600;color:var(--text2);font-size:12.5px;}
+.field label .unit{color:var(--text3);font-weight:500;font-size:11px;}
+.field input,.field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--text);background:#fafbfc;transition:all .18s ease;font-weight:500;}
+.field input:hover,.field select:hover{border-color:#cbd5e1;background:#fff;}
+.field input:focus,.field select:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.1);}
+.field input[readonly]{background:#f8fafc;color:var(--text2);cursor:not-allowed;}
+.field input::placeholder{color:var(--text3);font-weight:400;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 28px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s ease;box-shadow:0 4px 14px rgba(37,99,235,.3);}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(37,99,235,.4);}
+.btn:active{transform:translateY(0);}
+.btn-block{width:100%;margin-bottom:0;}
+.btn-row{display:flex;gap:12px;margin:4px 0 20px;flex-wrap:wrap;}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:6px;}
+.btn-success{background:linear-gradient(135deg,#059669,#047857);color:#fff;}
+/* 删除按钮淡化 */
+.btn-del{background:#e5e7eb;color:#333;border:none;}
+.btn-del:hover{background:#d1d5db;transform:none;box-shadow:none;}
+.table-wrap{border-radius:var(--radius);overflow-x:auto;overflow-y:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--border);width:100%;}
+table{width:100%;min-width:640px;border-collapse:collapse;}
+th,td{padding:12px 10px;text-align:center;}
+thead th{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;font-weight:600;font-size:13.5px;letter-spacing:.3px;border-bottom:none;}
+thead th:first-child{text-align:left;padding-left:22px;}
+tbody td{background:#fff;border-bottom:1px solid var(--border-light);font-size:14px;}
+tbody td:first{text-align:left;padding-left:22px;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:#f8fafc;}
+td .edit-price{width:90px;padding:6px 8px;text-align:center;border:1px solid var(--border);border-radius:4px;font-size:13px;}
+td.num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text);font-size:15px;}
+td.cheapest{color:var(--success);font-weight:700;background:var(--success-light) !important;position:relative;}
+td.cheapest::before{content:"✓ 最低";position:absolute;top:6px;right:8px;font-size:9px;font-weight:700;background:var(--success);color:#fff;padding:2px 7px;border-radius:10px;letter-spacing:.3px;}
+tbody tr:hover td.cheapest{background:#d1fae5 !important;}
+.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+/* 纸张结果专用三列网格 */
+.paper-result-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.result-item{padding:16px 18px;background:#fafbfc;border-radius:var(--radius-sm);border:1px solid var(--border-light);transition:all .2s ease;display:flex;flex-direction:column;gap:4px;}
+.result-item:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:#cbd5e1;}
+.result-item .label{font-size:12px;color:var(--text3);font-weight:500;}
+.result-item .value{font-size:20px;font-weight:700;color:var(--text);font-variant-numeric;}
+.result-item .value .unit{font-size:12px;font-weight:500;color:var(--text3);margin-left:3px;}
+.result-item.highlight{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:#6ee7b7;}
+.result-item.highlight .label{color:#047857;}
+.result-item.highlight .value{color:#047857;font-size:22px;}
+.result-item.accent{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#93c5fd;}
+.result-item.accent .label{color:#1d4ed8;}
+.result-item.accent .value{color:#1d4ed8;font-size:22px;}
+/* 红色金额文字 */
+.text-red{
+  color: var(--danger) !important;
+}
+.tip{margin-top:18px;padding:16px 18px;background:#f8fafc;border:1px solid var(--border-light);border-left:3px solid var(--primary);font-size:12.5px;color:var(--text2);line-height:1.9;box-shadow:0 2px 8px rgba(0,0,0,0.04);width:100%;}
+.tip .tip-title{font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.tip code{background:#fff;padding:1px 6px;border-radius:4px;font-family:"SF Mono",Consolas,monospace;font-size:11.5px;color:var(--primary-dark);border:1px solid var(--border-light);}
+.spec{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:11.5px;color:var(--text3);line-height:1.8;}
+select option{padding:6px;}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
+.form-row{display:grid;grid-template-columns:1fr 1fr 120px 120px;gap:10px;align-items:end;margin-bottom:12px;}
+/* 无工序提示样式 */
+</style>
+</head>
+<body>
+<div class="left-nav">
+  <div class="nav-brand">
+    <div class="logo">印</div>
+    <div>
+      <div class="title">印刷计算工具</div>
+      <div class="sub">工艺自动排序持久化</div>
+    </div>
+  </div>
+  <button class="nav-item active" onclick="switchPage('boxPage',this)"><span class="ico">📦</span>纸箱计算</button>
+  <button class="nav-item" onclick="switchPage('paperPage',this)"><span class="ico">📄</span>纸张计算</button>
+  <button class="nav-item" onclick="switchPage('printPage',this)"><span class="ico">🏷️</span>印刷计算</button>
+  <button class="nav-item" onclick="switchPage('techPage',this)"><span class="ico">⚙️</span>工艺维护</button>
+  <div class="nav-footer">喷码/印刷/后道自动排序</div>
+</div>
+<div class="main">
+<div class="wrap">
+  <!-- 纸箱页面 -->
+  <div id="boxPage" class="page show">
+    <div class="page-head">
+      <div class="head-ico">📦</div>
+      <div><h2>纸箱计算</h2><p>多厂商纸箱面积+单价自动比价</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>纸箱尺寸<span class="tag">mm</span></div>
+      <div class="row3">
+        <div class="field"><label>长</label><input id="inpL" value="470"></div>
+        <div class="field"><label>宽</label><input id="inpW" value="400"></div>
+        <div class="field"><label>高</label><input id="inpH" value="240"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>供应商平方单价<span class="tag">元/㎡</span></div>
+      <div class="row6">
+        <div class="field"><label>田园D</label><input id="tyDprice" value="4.5"></div>
+        <div class="field"><label>田园T</label><input id="tyTprice" value="3.8"></div>
+        <div class="field"><label>金星D</label><input id="jxDprice" value="4.2"></div>
+        <div class="field"><label>金星T</label><input id="jxTprice" value="3.7"></div>
+        <div class="field"><label>合D</label><input id="hxDprice" value="4.65"></div>
+        <div class="field"><label>合T</label><input id="hxTprice" value="4.71"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-block" onclick="calcBox()">🔍 开始比价计算</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>项目</th>
+              <th>🏠田园</th>
+              <th>⭐金星</th>
+              <th>🤝合信</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>纸箱面积</td><td id="tyArea" class="num">—</td><td id="jxArea" class="num">—</td><td id="hxArea" class="num">—</td></tr>
+            <tr><td>D单个价</td><td id="tyD" class="num">—</td><td id="jxD" class="num">—</td><td id="hxD" class="num">—</td></tr>
+            <tr><td>T单个价</td><td id="tyT" class="num">—</td><td id="jxT" class="num">—</td><td id="hxT" class="num">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="tip">
+      <div class="tip-title">📐 面积公式</div>
+      田园=(长+10+宽+10+20)*2*(宽+10+H+15+6)÷1000000<br>
+      金星=((长+10+宽+10)*2+40)*((宽+10+H+15)+25)÷1000000<br>
+      合信=((长+宽+7)*2+35)*(宽+H+7)÷1000000
+    </div>
+  </div>
+
+  <!-- 纸张计算 -->
+  <div id="paperPage" class="page">
+    <div class="page-head">
+      <div class="head-ico">📄</div>
+      <div><h2>纸张计算</h2><p>克重/吨价/替代纸差价分摊</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>纸张基础参数</div>
+      <div class="row5">
+        <div class="field"><label>克重 g/㎡</label><input id="paperGram" value="350"></div>
+        <div class="field"><label>幅宽 mm</label><input id="paperWid" value="700"></div>
+        <div class="field"><label>长度 mm</label><input id="paperLen" value="889"></div>
+        <div class="field"><label>替代宽 mm</label><input id="paperWidAlt" value="710"></div>
+        <div class="field"><label>纸张数量 张</label><input id="paperQty" value="10000"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>价格分摊</div>
+      <div class="row4">
+        <div class="field"><label>订单吨价 <span class="unit">元/吨</span></label><input id="paperPriceTon" value="4350"></div>
+        <div class="field"><label>订单总金额</label><input id="paperTotalMoney" readonly></div>
+        <div class="field"><label>各担一半金额</label><input id="halfMoney" readonly></div>
+        <div class="field"><label>我司承担金额</label><input id="bearMoney" readonly></div>
+      </div>
+      <div style="margin:16px 0;border-top:1px dashed var(--border);"></div>
+      <div class="paper-result-grid" id="paperResult">
+        <div class="result-item"><span class="label">订单重量</span><span class="value">—<span class="unit">吨</span></span></div>
+        <div class="result-item"><span class="label">替代重量</span><span class="value">—<span class="unit">吨</span></span></div>
+        <div class="result-item"><span class="label">重量差异</span><span class="value text-red">—<span class="unit">吨</span></span></div>
+        <div class="result-item accent"><span class="label">差价总额</span><span class="value text-red">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">对半分摊吨价</span><span class="value">—<span class="unit">元/吨</span></span></div>
+        <div class="result-item accent"><span class="label">我方承担吨价</span><span class="value">—<span class="unit">元/吨</span></span></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-block" onclick="calcPaper()">🔍 计算纸张差价</button>
+    </div>
+  </div>
+
+  <!-- 印刷计算 -->
+  <div id="printPage" class="page">
+    <div class="page-head">
+      <div class="head-ico">🏷️</div>
+      <div><h2>印刷全成本核算</h2><p>纸张/印刷/喷码/后道/装箱统一计价</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>纸张基础</div>
+      <div class="row4">
+        <div class="field"><label>克重 g/㎡</label><input id="boxGram" value="425"></div>
+        <div class="field"><label>纸宽 mm</label><input id="printPaperW" value="650"></div>
+        <div class="field"><label>纸长 mm</label><input id="printPaperL" value="820"></div>
+        <div class="field"><label>订单总数 个</label><input id="printQty" value="100000"></div>
+      </div>
+      <div class="row4" style="margin-top:14px;">
+        <div class="field"><label>拼版 个/张</label><input id="sheetNum" value="9"></div>
+        <div class="field"><label>损耗率 %</label><input id="wasteRate" value="5"></div>
+        <div class="field"><label>纸张吨价 元/吨</label><input id="paperTonPrice" value="4950"></div>
+        <div class="field"><label>用纸总数 张</label><input id="paperSheetQty" readonly></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>印刷色配置（取自工艺）</div>
+      <div class="row2">
+        <div class="field"><label>印刷色数</label><input id="colorNum" value="7"></div>
+        <div class="field"><label>单色计价方案</label><select id="colorPriceSel"></select></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>喷码+后道工艺</div>
+      <div class="row4">
+        <div class="field"><label>喷码</label><select id="spraySel"></select></div>
+        <div class="field"><label>过油</label><select id="oilType"></select></div>
+        <div class="field"><label>覆膜</label><select id="filmType"></select></div>
+        <div class="field"><label>烫金</label><select id="hotGoldType"></select></div>
+      </div>
+      <div class="row4" style="margin-top:14px;">
+        <div class="field"><label>UV</label><select id="uvType"></select></div>
+        <div class="field"><label>击凸</label><select id="embossType"></select></div>
+        <div class="field"><label>模切</label><select id="cutType"></select></div>
+        <div class="field"><label>糊盒</label><select id="pasteType"></select></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>装箱纸箱成本</div>
+      <div class="row3">
+        <div class="field"><label>每箱装量 个</label><input id="boxPerCarton" value="500"></div>
+        <div class="field"><label>单个纸箱价 元</label><input id="singleCartonPrice" value="3.2"></div>
+        <div class="field"><label>纸箱总费用</label><input id="totalCartonCost" readonly></div>
+      </div>
+      <div class="spec">纸箱总数=向上取整(订单÷每箱)；总费用=箱数×单箱价</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-block" onclick="calcPrint()">🔍 一键核算总成本</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>报价明细汇总</div>
+      <div class="result-grid" id="printResult">
+        <div class="result-item"><span class="label">纸张成本</span><span class="value">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">单张纸价</span><span class="value">—<span class="unit">元/张</span></span></div>
+        <div class="result-item"><span class="label">印刷费</span><span class="value">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">单张印刷价</span><span class="value">—<span class="unit">元/张</span></span></div>
+        <div class="result-item"><span class="label">喷码费</span><span class="value">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">单个喷码价</span><span class="value">—<span class="unit">元/个</span></span></div>
+        <div class="result-item"><span class="label">过油费</span><span class="value">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">单张过油价</span><span class="value">—<span class="unit">元/张</span></span></div>
+        <div class="result-item"><span class="label">覆膜费</span><span class="value">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">单张覆膜价</span><span class="value">—<span class="unit">元/张</span></span></div>
+        <div class="result-item"><span class="label">烫金费</span><span class="value">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">单张烫金价</span><span class="value">—<span class="unit">元/张</span></span></div>
+        <div class="result-item"><span class="label">UV费</span><span class="value">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">单张UV价</span><span class="value">—<span class="unit">元/张</span></span></div>
+        <div class="result-item"><span class="label">击凸费</span><span class="value">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">单张击凸价</span><span class="value">—<span class="unit">元/张</span></span></div>
+        <div class="result-item"><span class="label">模切费</span><span class="value">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">单张模切价</span><span class="value">—<span class="unit">元/张</span></span></div>
+        <div class="result-item"><span class="label">糊盒总费</span><span class="value">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">单个糊盒价</span><span class="value">—<span class="unit">元/个</span></span></div>
+        <div class="result-item"><span class="label">外箱总费</span><span class="value">—<span class="unit">元</span></span></div>
+        <div class="result-item accent"><span class="label">单外箱价</span><span class="value">—<span class="unit">元/个</span></span></div>
+        <div class="result-item accent" style="grid-column: span 2;"><span class="label">印章价(印刷+过油+0.012)</span><span class="value">—<span class="unit">元/张</span></span></div>
+        <div class="result-item highlight" style="grid-column: span 2;"><span class="label">项目合计总成本</span><span class="value">—<span class="unit">元</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 工艺维护：自动分类排序+实时本地持久化，移除保存按钮 -->
+  <div id="techPage" class="page">
+    <div class="page-head">
+      <div class="head-ico">⚙️</div>
+      <div><h2>工艺参数维护</h2><p>自动分类排序，修改实时保存，关闭不丢失</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>新增工艺条目</div>
+      <div class="form-row">
+        <div class="field">
+          <label>工艺分类</label>
+          <select id="addTechType">
+            <option value="spray">喷码(元/个)</option>
+            <option value="colorPrice">印刷(元/张/色)</option>
+            <option value="oil">过油(元/㎡)</option>
+            <option value="film">覆膜(元/㎡)</option>
+            <option value="hotgold">烫金(元/张)</option>
+            <option value="uv">UV(元/张)</option>
+            <option value="emboss">击凸(元/张)</option>
+            <option value="cut">模切(元/张)</option>
+            <option value="paste">糊盒(元/个)</option>
+          </select>
+        </div>
+        <div class="field"><label>工艺名称</label><input id="addTechName" placeholder="普通喷码"></div>
+        <div class="field"><label>单价</label><input id="addTechPrice" placeholder="0.02"></div>
+        <div class="field" style="display:flex;gap:6px;">
+          <button class="btn btn-sm btn-success" onclick="addTechItem()">新增</button>
+          <button class="btn btn-sm" onclick="resetDefaultTech()">重置默认</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>现有工艺列表（自动按分类排序）<span class="tag">编辑单元格实时保存</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>分类</th>
+              <th>名称</th>
+              <th>单价(实时编辑)</th>
+              <th>单位</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="techTbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="tip">
+      <div class="tip-title">💡 功能说明</div>
+      1.固定排序：1喷码→2印刷→3过油→4覆膜→5烫金→6UV→7击凸→8模切→9糊盒<br>
+      2.表格输入框修改单价，失去焦点自动保存本地存储<br>
+      3.新增/删除工艺自动重排表格并持久化<br>
+      4.关闭浏览器重新打开，所有自定义工艺不丢失<br>
+      5.印刷页面下拉实时同步最新工艺数据
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ========== 全局存储KEY ==========
+const TECH_STORAGE_KEY = 'printTechList';
+
+// 分类优先级：用于自动排序
+const SORT_ORDER = {
+  spray:1,
+  colorPrice:2,
+  oil:3,
+  film:4,
+  hotgold:5,
+  uv:6,
+  emboss:7,
+  cut:8,
+  paste:9
+};
+// 分类显示文字映射
+const TYPE_TEXT_MAP = {
+  spray:'喷码',
+  colorPrice:'印刷',
+  oil:'过油',
+  film:'覆膜',
+  hotgold:'烫金',
+  uv:'UV',
+  emboss:'击凸',
+  cut:'模切',
+  paste:'糊盒'
+};
+// 默认工艺数据
+function getDefaultTechData(){
+  return [
+    // 喷码
+    {type:'spray',name:'不喷码',price:0,unit:'元/个'},
+    {type:'spray',name:'普通喷码',price:0.02,unit:'元/个'},
+    // 印刷
+    {type:'colorPrice',name:'常规＜6色',price:0.05,unit:'元/张/色'},
+    {type:'colorPrice',name:'常规≥6色',price:0.045,unit:'元/张/色'},
+    // 过油
+    {type:'oil',name:'不过油',price:0,unit:'元/㎡'},
+    {type:'oil',name:'光油/哑油',price:0.3,unit:'元/㎡'},
+    {type:'oil',name:'逆向油',price:0.5,unit:'元/㎡'},
+    {type:'oil',name:'光哑复合',price:0.6,unit:'元/㎡'},
+    // 覆膜
+    {type:'film',name:'无覆膜',price:0,unit:'元/㎡'},
+    {type:'film',name:'亮膜',price:0.37,unit:'元/㎡'},
+    {type:'film',name:'哑膜',price:0.42,unit:'元/㎡'},
+    // 烫金
+    {type:'hotgold',name:'不烫金',price:0,unit:'元/张'},
+    {type:'hotgold',name:'普通烫金',price:0.08,unit:'元/张'},
+    // UV
+    {type:'uv',name:'无UV',price:0,unit:'元/张'},
+    {type:'uv',name:'普通UV',price:0.07,unit:'元/张'},
+    // 击凸
+    {type:'emboss',name:'不击凸',price:0,unit:'元/张'},
+    {type:'emboss',name:'普通击凸',price:0.07,unit:'元/张'},
+    // 模切
+    {type:'cut',name:'不模切',price:0,unit:'元/张'},
+    {type:'cut',name:'普通模切',price:0.06,unit:'元/张'},
+    // 糊盒
+    {type:'paste',name:'不糊盒',price:0,unit:'元/个'},
+    {type:'paste',name:'普通糊盒',price:0.04,unit:'元/个'},
+  ]
+}
+
+// 读取本地存储
+function getTechList(){
+  let str = localStorage.getItem(TECH_STORAGE_KEY);
+  if(!str){
+    const def = getDefaultTechData();
+    saveTechList(def);
+    return def;
+  }
+  try{
+    return JSON.parse(str);
+  }catch(e){
+    const def = getDefaultTechData();
+    saveTechList(def);
+    return def;
+  }
+}
+// 写入本地存储
+function saveTechList(list){
+  localStorage.setItem(TECH_STORAGE_KEY, JSON.stringify(list));
+}
+// 按分类自动排序
+function sortTechList(arr){
+  return [...arr].sort((a,b)=>{
+    return SORT_ORDER[a.type] - SORT_ORDER[b.type];
+  })
+}
+// 渲染工艺表格，绑定输入框失去焦点自动保存
+function renderTechTable(){
+  const raw = getTechList();
+  const list = sortTechList(raw);
+  const tbody = document.getElementById('techTbody');
+  tbody.innerHTML = '';
+  list.forEach((item,idx)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${TYPE_TEXT_MAP[item.type]}</td>
+      <td>${item.name}</td>
+      <td><input class="edit-price" data-idx="${idx}" data-type="${item.type}" data-name="${item.name}" type="number" step="0.001" value="${item.price}"></td>
+      <td>${item.unit}</td>
+      <td><button class="btn btn-sm btn-del" onclick="delTech(${idx})">删除</button></td>
+    `;
+    tbody.appendChild(tr);
+  })
+  // 绑定blur自动保存
+  document.querySelectorAll('.edit-price').forEach(input=>{
+    input.onblur = function(){
+      const idx = Number(this.dataset.idx);
+      const newVal = parseFloat(this.value);
+      if(isNaN(newVal) || newVal < 0){
+        alert("单价不能为负数");
+        renderTechTable();
+        return;
+      }
+      const all = getTechList();
+      const rawList = sortTechList(all);
+      const targetItem = rawList[idx];
+      // 找到原数组对应条目修改
+      const originIdx = all.findIndex(t=>t.type===target.type && t.name===target.name);
+      if(originIdx > -1){
+        all[originIdx].price = newVal;
+        saveTechList(all);
+        fillAllSelect();
+      }
+    }
+  })
+}
+// 新增工艺
+function addTechItem(){
+  const type = document.getElementById('addTechType').value;
+  const name = document.getElementById('addTechName').value.trim();
+  const val = parseFloat(document.getElementById('addTechPrice').value);
+  if(!name || isNaN(val) || val <0){
+    alert("名称非空，单价≥0");
+    return;
+  }
+  const unitMap = {
+    spray:'元/个',
+    colorPrice:'元/张/色',
+    oil:'元/㎡',
+    film:'元/㎡',
+    hotgold:'元/张',
+    uv:'元/张',
+    emboss:'元/张',
+    cut:'元/张',
+    paste:'元/个'
+  };
+  const all = getTechList();
+  all.push({type,name,price:val,unit:unitMap[type]});
+  saveTechList(all);
+  renderTechTable();
+  fillAllSelect();
+  document.getElementById('addTechName').value = '';
+  document.getElementById('addTechPrice').value = '';
+}
+// 删除工艺
+function delTech(idx){
+  const all = getTechList();
+  const sorted = sortTechList(all);
+  const target = sorted[idx];
+  const realIdx = all.findIndex(t=>t.type===target.type && t.name===target.name);
+  if(realIdx > -1){
+    all.splice(realIdx,1);
+    saveTechList(all);
+    renderTechTable();
+    fillAllSelect();
+  }
+}
+// 重置默认
+function resetDefaultTech(){
+  if(!confirm("确认恢复出厂，自定义全部清空？")) return;
+  const def = getDefaultTechData();
+  saveTechList(def);
+  renderTechTable();
+  fillAllSelect();
+}
+// 填充所有印刷页面下拉
+function fillAllSelect(){
+  const raw = getTechList();
+  const list = sortTechList(raw);
+  const oilSel = document.getElementById('oilType');
+  const filmSel = document.getElementById('filmType');
+  const hotSel = document.getElementById('hotGoldType');
+  const uvSel = document.getElementById('uvType');
+  const cutSel = document.getElementById('cutType');
+  const embSel = document.getElementById('embossType');
+  const pasteSel = document.getElementById('pasteType');
+  const spraySel = document.getElementById('spraySel');
+  const colorSel = document.getElementById('colorPriceSel');
+  [oilSel,filmSel,hotSel,uvSel,cutSel,embSel,pasteSel,spraySel,colorSel].forEach(el=>el.innerHTML='');
+  list.forEach(item=>{
+    const opt = new Option(`${item.name} ${item.price}${item.unit}`, item.price);
+    switch(item.type){
+      case 'spray': spraySel.append(opt); break;
+      case 'colorPrice': colorSel.append(opt); break;
+      case 'oil': oilSel.append(opt); break;
+      case 'film': filmSel.append(opt); break;
+      case 'hotgold': hotSel.append(opt); break;
+      case 'uv': uvSel.append(opt); break;
+      case 'emboss': embSel.append(opt); break;
+      case 'cut': cutSel.append(opt); break;
+      case 'paste': pasteSel.append(opt); break;
+    }
+  })
+}
+// 页面切换
+function switchPage(pageId, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
+  document.getElementById(pageId).classList.add('show');
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  fillAllSelect();
+  if(pageId === 'techPage') renderTechTable();
+}
+
+// ================== 纸箱计算 ==================
+function calcBox(){
+  const L = parseFloat(document.getElementById('inpL').value);
+  const W = parseFloat(document.getElementById('inpW').value);
+  const H = parseFloat(document.getElementById('inpH').value);
+  const tyDp = parseFloat(document.getElementById('tyDprice').value);
+  const tyTp = parseFloat(document.getElementById('tyTprice').value);
+  const jxDp = parseFloat(document.getElementById('jxDprice').value);
+  const jxTp = parseFloat(document.getElementById('jxTprice').value);
+  const hxDp = parseFloat(document.getElementById('hxDprice').value);
+  const hxTp = parseFloat(document.getElementById('hxTprice').value);
+  if(isNaN(L)||isNaN(W)||isNaN(H)){clearAll("输入异常");return;}
+  const areaTy = (L+10+W+10+20)*2*(W+10+H+15+6)/1000000;
+  const areaJx = ((L+10+W+10)*2+40)*((W+10+H+15)+25)/1000000;
+  const areaHx = ((L+W+7)*2+35)*(W+H+7)/1000000;
+  document.getElementById('tyArea').innerText = areaTy.toFixed(4)+' ㎡';
+  document.getElementById('jxArea').innerText = areaJx.toFixed(4)+' ㎡';
+  document.getElementById('hxArea').innerText = areaHx.toFixed(4)+' ㎡';
+  const vals = {
+    tyD:!isNaN(tyDp)?areaTy*tyDp:null,
+    jxD:!isNaN(jxDp)?areaJx*jxDp:null,
+    hxD:!isNaN(hxDp)?areaHx*hxDp:null,
+    tyT:!isNaN(tyTp)?areaTy*tyTp:null,
+    jxT:!isNaN(jxTp)?areaJx*jxTp:null,
+    hxT:!isNaN(hxTp)?areaHx*hxTp:null
+  };
+  Object.keys(vals).forEach(k=>{
+    const el = document.getElementById(k);
+    el.innerText = vals[k]!==null ? '¥'+vals[k].toFixed(2) : '—';
+    el.classList.remove('cheapest');
+  })
+  highlightMin(['tyD','jxD','hxD'],vals);
+  highlightMin(['tyT','jxT','hxT'],vals);
+}
+function highlightMin(ids,data){
+  const arr = ids.filter(id=>data[id]!==null).map(id=>({id,val:data[id]}));
+  if(arr.length===0) return;
+  const min = Math.min(...arr.map(x=>x.val));
+  arr.filter(x=>Math.abs(x.val-min)<0.001).forEach(x=>{
+    document.getElementById(x.id).classList.add('cheapest');
+  })
+}
+function clearAll(txt){
+  ['tyArea','jxArea','hxArea'].forEach(id=>document.getElementById(id).innerText=txt);
+  ['tyD','jxD','hxD','tyT','jxT','hxT'].forEach(id=>{
+    const el = document.getElementById(id);
+    el.innerText = '—';
+    el.classList.remove('cheapest');
+  })
+}
+
+// ================== 纸张计算 ==================
+function calcPaper(){
+  const gram = parseFloat(document.getElementById('paperGram').value);
+  const wid = parseFloat(document.getElementById('paperWid').value);
+  const len = parseFloat(document.getElementById('paperLen').value);
+  const widAlt = parseFloat(document.getElementById('paperWidAlt').value);
+  const tonPrice = parseFloat(document.getElementById('paperPriceTon').value);
+  const qty = parseFloat(document.getElementById('paperQty').value);
+  if([gram,wid,len,widAlt,tonPrice,qty].some(isNaN)){renderPaperErr();return;}
+  const areaOrg = wid*len/1000000;
+  const tonOrg = areaOrg * gram * qty / 1000000;
+  const amtOrg = tonOrg * tonPrice;
+  const areaAlt = widAlt*len/1000000;
+  const tonAlt = areaAlt * gram * qty / 1000000;
+  const diffTon = Math.abs(tonOrg - tonAlt);
+  const diffAmt = diffTon * tonPrice;
+  const halfTon = (diffAmt/2 + amtOrg) / tonAlt;
+  const halfMoney = halfTon * tonAlt;
+  const bearMoney = ((tonAlt * tonPrice) / tonOrg) * tonOrg;
+  document.getElementById('paperTotalMoney').value = amtOrg.toFixed(2);
+  document.getElementById('halfMoney').value = halfMoney.toFixed(2);
+  document.getElementById('bearMoney').value = bearMoney.toFixed(2);
+  document.getElementById('paperResult').innerHTML = `
+    <div class="result-item"><span class="label">订单重量</span><span class="value">${tonOrg.toFixed(2)}<span class="unit">吨</span></span></div>
+    <div class="result-item"><span class="label">替代重量</span><span class="value">${tonAlt.toFixed(2)}<span class="unit">吨</span></span></div>
+    <div class="result-item"><span class="label">重量差异</span><span class="value text-red">${diffTon.toFixed(2)}<span class="unit">吨</span></span></div>
+    <div class="result-item accent"><span class="label">差价总额</span><span class="value text-red">${diffAmt.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">对半分摊吨价</span><span class="value">${halfTon.toFixed(2)}<span class="unit">元/吨</span></span></div>
+    <div class="result-item accent"><span class="label">我方承担吨价</span><span class="value">${(tonAlt * tonPrice / tonOrg).toFixed(2)}<span class="unit">元/吨</span></span>
+    </div>`;
+}
+function renderPaperErr(){
+  document.getElementById('paperTotalMoney').value = '';
+  document.getElementById('halfMoney').value = '';
+  document.getElementById('bearMoney').value = '';
+  document.getElementById('paperResult').innerHTML = `
+    <div class="result-item"><span class="label">订单重量</span><span class="value">输入异常</span></div>
+    <div class="result-item"><span class="label">替代重量</span><span class="value">—</span></div>
+    <div class="result-item"><span class="label">重量差异</span><span class="value text-red">—</span></div>
+    <div class="result-item accent"><span class="label">差价总额</span><span class="value text-red">—</span></div>
+    <div class="result-item accent"><span class="label">对半分摊吨价</span><span class="value">—</span></div>
+    <div class="result-item accent"><span class="label">我方承担吨价</span><span class="value">—</span>
+    </div>`;
+}
+
+// ================== 印刷计算（喷码按单个成品） ==================
+function calcPrint(){
+  const gram = parseFloat(document.getElementById('boxGram').value);
+  const qty = parseFloat(document.getElementById('printQty').value);
+  const sheetNum = parseFloat(document.getElementById('sheetNum').value);
+  const waste = parseFloat(document.getElementById('wasteRate').value);
+  const pW = parseFloat(document.getElementById('printPaperW').value);
+  const pL = parseFloat(document.getElementById('printPaperL').value);
+  const color = parseFloat(document.getElementById('colorNum').value);
+  const paperTonPrice = parseFloat(document.getElementById('paperTonPrice').value);
+  const colorUnit = parseFloat(document.getElementById('colorPriceSel').value);
+  const sprayUnit = parseFloat(document.getElementById('spraySel').value);
+  const oilPrice = parseFloat(document.getElementById('oilType').value);
+  const filmPrice = parseFloat(document.getElementById('filmType').value);
+  const hotGold = parseFloat(document.getElementById('hotGoldType').value);
+  const uv = parseFloat(document.getElementById('uvType').value);
+  const emboss = parseFloat(document.getElementById('embossType').value);
+  const cut = parseFloat(document.getElementById('cutType').value);
+  const paste = parseFloat(document.getElementById('pasteType').value);
+  const perBox = parseFloat(document.getElementById('boxPerCarton').value);
+  const cartonSingle = parseFloat(document.getElementById('singleCartonPrice').value);
+  const allNum = [gram,qty,sheetNum,waste,pW,pL,color,paperTonPrice,colorUnit,sprayUnit,oilPrice,filmPrice,hotGold,uv,emboss,cut,paste,perBox,cartonSingle];
+  if(allNum.some(isNaN) || qty<=0 || sheetNum<=0 || perBox<=0){
+    renderPrintErr();
+    return;
+  }
+  const sheetTotal = Math.ceil(qty / sheetNum * (1 + waste / 100));
+  const sheetArea = pW * pL / 1000000;
+  const sheetTon = sheetArea * gram / 1000000;
+  const paperCost = sheetTon * sheetTotal * paperTonPrice;
+  const singlePaper = sheetTon * paperTonPrice;
+  const printSingle = color * colorUnit;
+  const printTotal = sheetTotal * printSingle;
+  const sprayTotal = qty * sprayUnit;
+  const spraySingle = sprayUnit;
+  const oilSingle = sheetArea * oilPrice;
+  const oilTotal = sheetTotal * oilSingle;
+  const filmSingle = sheetArea * filmPrice;
+  const filmTotal = sheetTotal * filmSingle;
+  const hotGoldTotal = sheetTotal * hotGold;
+  const uvTotal = sheetTotal * uv;
+  const embossTotal = sheetTotal * emboss;
+  const cutTotal = sheetTotal * cut;
+  const pasteTotal = qty * paste;
+  const cartonCount = Math.ceil(qty / perBox);
+  const cartonTotalCost = cartonCount * cartonSingle;
+  const sealPrice = printSingle + oilSingle + 0.012;
+  const totalAll = paperCost + printTotal + sprayTotal + oilTotal + filmTotal + hotGoldTotal + uvTotal + embossTotal + cutTotal + pasteTotal + cartonTotalCost;
+  document.getElementById('paperSheetQty').value = sheetTotal;
+  document.getElementById('totalCartonCost').value = cartonTotalCost.toFixed(2);
+  document.getElementById('printResult').innerHTML = `
+    <div class="result-item"><span class="label">纸张成本</span><span class="value">${paperCost.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张纸价</span><span class="value">${singlePaper.toFixed(4)}<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">印刷费</span><span class="value">${printTotal.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张印刷价</span><span class="value">${printSingle.toFixed(4)}<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">喷码费</span><span class="value">${sprayTotal.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单个喷码价</span><span class="value">${spraySingle.toFixed(4)}<span class="unit">元/个</span></span></div>
+    <div class="result-item"><span class="label">过油费</span><span class="value">${oilTotal.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张过油价</span><span class="value">${oilSingle.toFixed(4)}<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">覆膜费</span><span class="value">${filmTotal.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张覆膜价</span><span class="value">${filmSingle.toFixed(4)}<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">烫金费</span><span class="value">${hotGoldTotal.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张烫金价</span><span class="value">${hotGold.toFixed(4)}<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">UV费</span><span class="value">${uvTotal.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张UV价</span><span class="value">${uv.toFixed(4)}<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">击凸费</span><span class="value">${embossTotal.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张击凸价</span><span class="value">${emboss.toFixed(4)}<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">模切费</span><span class="value">${cutTotal.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张模切价</span><span class="value">${cut.toFixed(4)}<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">糊盒总费</span><span class="value">${pasteTotal.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单个糊盒价</span><span class="value">${paste.toFixed(4)}<span class="unit">元/个</span></span></div>
+    <div class="result-item"><span class="label">外箱总费</span><span class="value">${cartonTotalCost.toFixed(2)}<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单外箱价</span><span class="value">${cartonSingle.toFixed(4)}<span class="unit">元/个</span></span></div>
+    <div class="result-item accent" style="grid-column: span 2;"><span class="label">印章价(印刷+过油+0.012)</span><span class="value">${sealPrice.toFixed(4)}<span class="unit">元/张</span></span></div>
+    <div class="result-item highlight" style="grid-column: span 2;"><span class="label">项目合计总成本</span><span class="value">${totalAll.toFixed(2)}<span class="unit">元</span></span>
+    </div>`;
+}
+function renderPrintErr(){
+  document.getElementById('paperSheetQty').value = '';
+  document.getElementById('totalCartonCost').value = '';
+  document.getElementById('printResult').innerHTML = `
+    <div class="result-item"><span class="label">纸张成本</span><span class="value">—<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张纸价</span><span class="value">—<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">印刷费</span><span class="value">—<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张印刷价</span><span class="value">—<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">喷码费</span><span class="value">—<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单个喷码价</span><span class="value">—<span class="unit">元/个</span></span></div>
+    <div class="result-item"><span class="label">过油费</span><span class="value">—<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张过油价</span><span class="value">—<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">覆膜费</span><span class="value">—<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张覆膜价</span><span class="value">—<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">烫金费</span><span class="value">—<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张烫金价</span><span class="value">—<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">UV费</span><span class="value">—<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张UV价</span><span class="value">—<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">击凸费</span><span class="value">—<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张击凸价</span><span class="value">—<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">模切费</span><span class="value">—<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单张模切价</span><span class="value">—<span class="unit">元/张</span></span></div>
+    <div class="result-item"><span class="label">糊盒总费</span><span class="value">—<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单个糊盒价</span><span class="value">—<span class="unit">元/个</span></span></div>
+    <div class="result-item"><span class="label">外箱总费</span><span class="value">—<span class="unit">元</span></span></div>
+    <div class="result-item accent"><span class="label">单外箱价</span><span class="value">—<span class="unit">元/个</span></span></div>
+    <div class="result-item accent" style="grid-column: span 2;"><span class="label">印章价(印刷+过油+0.012)</span><span class="value">—<span class="unit">元/张</span></span></div>
+    <div class="result-item highlight" style="grid-column: span 2;"><span class="label">项目合计总成本</span><span class="value">—<span class="unit">元</span></span>
+    </div>`;
+}
+
+// 回车全局绑定
+document.querySelectorAll('input,select').forEach(el=>{
+  el.addEventListener('keydown',function(e){
+    if(e.key === 'Enter'){
+      if(document.getElementById('boxPage').classList.contains('show')) calcBox();
+      if(document.getElementById('paperPage').classList.contains('show')) calcPaper();
+      if(document.getElementById('printPage').classList.contains('show')) calcPrint();
+    }
+  })
+})
+
+// 初始化
+window.onload = function(){
+  fillAllSelect();
+  renderTechTable();
+}
+</script>
+</body>
+</html>
