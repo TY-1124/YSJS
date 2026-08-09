@@ -1,328 +1,158 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=1100,initial-scale=1,maximum-scale=3,minimum-scale=0.5,user-scalable=yes">
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-:root{
-  --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;
-  --success:#059669;--success-bg:#d1fae5;--success-light:#ecfdf5;
-  --warn:#d97706;--danger:#dc2626;
-  --bg:#f1f5f9;--card:#ffffff;--text:#0f172a;--text2:#475569;--text3:#94a3b8;
-  --border:#e2e8f0;--border-light:#f1f5f9;
-  --shadow-sm:0 1px 3px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
-  --shadow:0 4px 16px rgba(15,23,42,.06),0 2px 6px rgba(15,23,42,.04);
-  --shadow-lg:0 10px 30px rgba(15,23,42,.08),0 4px 10px rgba(37,99,235,.04);
-  --radius:14px;--radius-sm:10px;--radius-lg:20px;
-}
-html{overflow-x:auto;}
-body{background:var(--bg);min-height:100vh;display:flex;color:var(--text);font-size:14px;line-height:1.5;}
-.left-nav{width:224px;background:var(--card);padding:28px 16px;box-shadow:2px 0 20px rgba(15,23,42,.05);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;z-index:100;flex-shrink:0;}
-.nav-brand{display:flex;align-items:center;gap:10px;padding:0 10px 22px;margin-bottom:18px;border-bottom:1px solid var(--border-light);}
-.nav-brand .logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:700;box-shadow:0 4px 12px rgba(37,99,235,.3);}
-.nav-brand .title{font-size:16px;font-weight:700;color:var(--text);}
-.nav-brand .sub{font-size:11px;color:var(--text3);margin-top:1px;}
-.nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;margin-bottom:6px;border:none;border-radius:var(--radius-sm);background:transparent;text-align:left;font-size:14px;cursor:pointer;transition:all .18s ease;color:var(--text2);font-weight:500;position:relative;}
-.nav-item .ico{font-size:16px;width:22px;text-align:center;}
-.nav-item:hover{background:#f8fafc;color:var(--text);}
-.nav-item.active{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-weight:600;box-shadow:0 4px 14px rgba(37,99,235,.35);}
-.nav-item.active::before{content:"";position:absolute;left:-16px;top:50%;transform:translateY(-50%);width:4px;height:22px;background:#fff;border-radius:0 4px 0;}
-.nav-footer{margin-top:auto;padding:14px 10px 0;border-top:1px solid var(--border-light);font-size:11px;color:var(--text3);text-align:center;}
-.main{flex:1;padding:25px 27px;min-width:0;}
-.wrap{width:700px;margin:0 auto;}
-.page{display:none;}
-.page.show{display:block;animation:fadeIn .35s ease;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.page-head{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
-.page-head .head-ico{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 6px 16px rgba(37,99,235,.28);}
-.page-head h2{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.3px;}
-.page-head p{font-size:13px;color:var(--text3);margin-top:2px;}
-.card{background:var(--card);border-radius:var(--radius-lg);padding:24px 26px;margin-bottom:18px;box-shadow:var(--shadow);border:1px solid rgba(226,232,240,.7);width:100%;}
-.card-title{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700;color:var(--text);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border-light);}
-.card-title .dot{width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 3px var(--primary-light);}
-.card-title .tag{margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--primary-light);color:var(--primary);}
-.row2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
-.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-.row5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
-.row6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
-.field{margin-bottom:4px;min-width:0;}
-.field label{display:flex;align-items:center;gap:5px;margin-bottom:7px;font-weight:600;color:var(--text2);font-size:12.5px;}
-.field label .unit{color:var(--text3);font-weight:500;font-size:11px;}
-.field input,.field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--text);background:#fafbfc;transition:all .18s ease;font-weight:500;}
-.field input:hover,.field select:hover{border-color:#cbd5e1;background:#fff;}
-.field input:focus,.field select:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.1);}
-.field input[readonly]{background:#f8fafc;color:var(--text2);cursor:not-allowed;}
-.field input::placeholder{color:var(--text3);font-weight:400;}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 28px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s ease;box-shadow:0 4px 14px rgba(37,99,235,.3);}
-.btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(37,99,235,.4);}
-.btn:active{transform:translateY(0);}
-.btn-block{width:100%;margin-bottom:0;}
-.btn-row{display:flex;gap:12px;margin:4px 0 20px;flex-wrap:wrap;}
-.btn-sm{padding:8px 14px;font-size:13px;border-radius:6px;}
-.btn-success{background:linear-gradient(135deg,#059669,#047857);color:#fff;}
-.btn-del{background:#e5e7eb;color:#333;border:none;}
-.btn-del:hover{background:#d1d5db;transform:none;box-shadow:none;}
-.table-wrap{border-radius:var(--radius);overflow-x:auto;overflow-y:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--border);width:100%;}
-table{width:100%;min-width:640px;border-collapse:collapse;}
-th,td{padding:12px 10px;text-align:center;}
-thead th{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;font-weight:600;font-size:13.5px;letter-spacing:.3px;border-bottom:none;}
-thead th:first-child{text-align:left;padding-left:22px;}
-tbody td{background:#fff;border-bottom:1px solid var(--border-light);font-size:14px;}
-tbody td:first{text-align:left;padding-left:22px;}
-tbody tr:last-child td{border-bottom:none;}
-tbody tr:hover td{background:#f8fafc;}
-td .edit-price{width:90px;padding:6px 8px;text-align:center;border:1px solid var(--border);border-radius:4px;font-size:13px;}
-td.num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text);font-size:15px;}
-td.cheapest{color:var(--success);font-weight:700;background:var(--success-light) !important;position:relative;}
-td.cheapest::before{content:"✓ 最低";position:absolute;top:6px;right:8px;font-size:9px;font-weight:700;background:var(--success);color:#fff;padding:2px 7px;border-radius:10px;letter-spacing:.3px;}
-tbody tr:hover td.cheapest{background:#d1fae5 !important;}
-.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
-.paper-result-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-}
-.result-item{padding:16px 18px;background:#fafbfc;border-radius:var(--radius-sm);border:1px solid var(--border-light);transition:all .2s ease;display:flex;flex-direction:column;gap:4px;}
-.result-item:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:#cbd5e1;}
-.result-item .label{font-size:12px;color:var(--text3);font-weight:500;}
-.result-item .value{font-size:20px;font-weight:700;color:var(--text);font-variant-numeric;}
-.result-item .value .unit{font-size:12px;font-weight:500;color:var(--text3);margin-left:3px;}
-.result-item.highlight{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:#6ee7b7;}
-.result-item.highlight .label{color:#047857;}
-.result-item.highlight .value{color:#047857;font-size:22px;}
-.result-item.accent{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#93c5fd;}
-.result-item.accent .label{color:#1d4ed8;}
-.result-item.accent .value{color:#1d4ed8;font-size:22px;}
-.text-red{
-  color: var(--danger) !important;
-}
-.tip{margin-top:18px;padding:16px 18px;background:#f8fafc;border:1px solid var(--border-light);border-left:3px solid var(--primary);font-size:12.5px;color:var(--text2);line-height:1.9;box-shadow:0 2px 8px rgba(0,0,0,0.04);width:100%;}
-.tip .tip-title{font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
-.tip code{background:#fff;padding:1px 6px;border-radius:4px;font-family:"SF Mono",Consolas,monospace;font-size:11.5px;color:var(--primary-dark);border:1px solid var(--border-light);}
-.spec{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:11.5px;color:var(--text3);line-height:1.8;}
-select option{padding:6px;}
-.empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
-.form-row{display:grid;grid-template-columns:1fr 1fr 120px 120px;gap:10px;align-items:end;margin-bottom:12px;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简易交互网页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            padding: 40px 20px;
+            background-color: #f5f7fa;
+            transition: background 0.4s;
+        }
+        .container {
+            max-width: 550px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #222;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .item {
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            padding: 11px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            margin:4px;
+            transition: 0.2s;
+        }
+        .btn-primary {
+            background-color: #2563eb;
+            color:white;
+        }
+        .btn-primary:hover {
+            background-color:#1d4ed8;
+        }
+        .btn-green {
+            background-color:#10b981;
+            color:white;
+        }
+        .btn-orange {
+            background-color:#f97316;
+            color:white;
+        }
+        .count-box {
+            font-size:28px;
+            text-align:center;
+            margin:12px 0;
+            font-weight:bold;
+        }
+        .output {
+            margin-top:10px;
+            padding:12px;
+            background:#f3f4f6;
+            border-radius:8px;
+        }
+    </style>
 </head>
 <body>
-<div class="left-nav">
-  <div class="nav-brand">
-    <div class="logo">印</div>
-    <div>
-      <div class="title">印刷计算工具</div>
-      <div class="sub">仅纸箱&纸张计算</div>
+<div class="container">
+    <h1>简易交互演示</h1>
+
+    <!-- 计数器 -->
+    <div class="item">
+        <label>计数器</label>
+        <div class="count-box" id="counter">0</div>
+        <button class="btn-primary" onclick="add()">+ 加一</button>
+        <button class="btn-orange" onclick="sub()">- 减一</button>
+        <button onclick="resetCount()">重置</button>
     </div>
-  </div>
-  <button class="nav-item active" onclick="switchPage('boxPage',this)"><span class="ico">📦</span>纸箱计算</button>
-  <button class="nav-item" onclick="switchPage('paperPage',this)"><span class="ico">📄</span>纸张计算</button>
-  <div class="nav-footer">纸箱纸张比价工具</div>
+
+    <!-- 输入框交互 -->
+    <div class="item">
+        <label>输入文字，点击显示</label>
+        <input type="text" id="textInput" placeholder="在这里输入内容">
+        <button class="btn-green" onclick="showText()">展示输入内容</button>
+        <div class="output" id="textOutput"></div>
+    </div>
+
+    <!-- 修改背景色 -->
+    <div class="item">
+        <label>切换页面背景颜色</label>
+        <button class="btn-primary" onclick="changeBg('#e0f2fe')">浅蓝</button>
+        <button class="btn-green" onclick="changeBg('#dcfce7')">浅绿</button>
+        <button class="btn-orange" onclick="changeBg('#fff7ed')">浅橙</button>
+        <button onclick="changeBg('#f5f7fa')">恢复默认</button>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="item">
+        <button class="btn-primary" onclick="showAlert()">弹出提示框</button>
+    </div>
 </div>
-<div class="main">
-<div class="wrap">
-  <div id="boxPage" class="page show">
-    <div class="page-head">
-      <div class="head-ico">📦</div>
-      <div><h2>纸箱计算</h2><p>多厂商纸箱面积+单价自动比价</p></div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="dot"></span>纸箱尺寸<span class="tag">mm</span></div>
-      <div class="row3">
-        <div class="field"><label>长</label><input id="inpL" value="470"></div>
-        <div class="field"><label>宽</label><input id="inpW" value="400"></div>
-        <div class="field"><label>高</label><input id="inpH" value="240"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="dot"></span>供应商平方单价<span class="tag">元/㎡</span></div>
-      <div class="row6">
-        <div class="field"><label>田园D</label><input id="tyDprice" value="4.5"></div>
-        <div class="field"><label>田园T</label><input id="tyTprice" value="3.8"></div>
-        <div class="field"><label>金星D</label><input id="jxDprice" value="4.2"></div>
-        <div class="field"><label>金星T</label><input id="jxTprice" value="3.7"></div>
-        <div class="field"><label>合D</label><input id="hxDprice" value="4.65"></div>
-        <div class="field"><label>合T</label><input id="hxTprice" value="4.71"></div>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-block" onclick="calcBox()">🔍 开始比价计算</button>
-    </div>
-    <div class="card" style="padding:0;overflow:hidden;">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>项目</th>
-              <th>🏠田园</th>
-              <th>⭐金星</th>
-              <th>🤝合信</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>纸箱面积</td><td id="tyArea" class="num">—</td><td id="jxArea" class="num">—</td><td id="hxArea" class="num">—</td></tr>
-            <tr><td>D单个价</td><td id="tyD" class="num">—</td><td id="jxD" class="num">—</td><td id="hxD" class="num">—</td></tr>
-            <tr><td>T单个价</td><td id="tyT" class="num">—</td><td id="jxT" class="num">—</td><td id="hxT" class="num">—</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="tip">
-      <div class="tip-title">📐 面积公式</div>
-      田园=(长+10+宽+10+20)*2*(宽+10+H+15+6)÷1000000<br>
-      金星=((长+10+宽+10)*2+40)*((宽+10+H+15)+25)÷1000000<br>
-      合信=((长+宽+7)*2+35)*(宽+H+7)÷1000000
-    </div>
-  </div>
-  <div id="paperPage" class="page">
-    <div class="page-head">
-      <div class="head-ico">📄</div>
-      <div><h2>纸张计算</h2><p>克重/吨价/替代纸差价分摊</p></div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="dot"></span>纸张基础参数</div>
-      <div class="row5">
-        <div class="field"><label>克重 g/㎡</label><input id="paperGram" value="350"></div>
-        <div class="field"><label>幅宽 mm</label><input id="paperWid" value="700"></div>
-        <div class="field"><label>长度 mm</label><input id="paperLen" value="889"></div>
-        <div class="field"><label>替代宽 mm</label><input id="paperWidAlt" value="710"></div>
-        <div class="field"><label>纸张数量 张</label><input id="paperQty" value="10000"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="dot"></span>价格分摊</div>
-      <div class="row4">
-        <div class="field"><label>订单吨价 <span class="unit">元/吨</span></label><input id="paperPriceTon" value="4350"></div>
-        <div class="field"><label>订单总金额</label><input id="paperTotalMoney" readonly></div>
-        <div class="field"><label>各担一半金额</label><input id="halfMoney" readonly></div>
-        <div class="field"><label>我司承担金额</label><input id="bearMoney" readonly></div>
-      </div>
-      <div style="margin:16px 0;border-top:1px dashed var(--border);"></div>
-      <div class="paper-result-grid" id="paperResult">
-        <div class="result-item"><span class="label">订单重量</span><span class="value">—<span class="unit">吨</span></span></div>
-        <div class="result-item"><span class="label">替代重量</span><span class="value">—<span class="unit">吨</span></span></div>
-        <div class="result-item"><span class="label">重量差异</span><span class="value text-red">—<span class="unit">吨</span></span></div>
-        <div class="result-item accent"><span class="label">差价总额</span><span class="value text-red">—<span class="unit">元</span></span></div>
-        <div class="result-item accent"><span class="label">对半分摊吨价</span><span class="value">—<span class="unit">元/吨</span></span></div>
-        <div class="result-item accent"><span class="label">我方承担吨价</span><span class="value">—<span class="unit">元/吨</span></span></div>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-block" onclick="calcPaper()">🔍 计算纸张差价</button>
-    </div>
-  </div>
-</div>
-</div>
+
 <script>
-function switchPage(pageId, btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
-  document.getElementById(pageId).classList.add('show');
-  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function calcBox(){
-  const L = parseFloat(document.getElementById('inpL').value);
-  const W = parseFloat(document.getElementById('inpW').value);
-  const H = parseFloat(document.getElementById('inpH').value);
-  const tyDp = parseFloat(document.getElementById('tyDprice').value);
-  const tyTp = parseFloat(document.getElementById('tyTprice').value);
-  const jxDp = parseFloat(document.getElementById('jxDprice').value);
-  const jxTp = parseFloat(document.getElementById('jxTprice').value);
-  const hxDp = parseFloat(document.getElementById('hxDprice').value);
-  const hxTp = parseFloat(document.getElementById('hxTprice').value);
-  if(isNaN(L)||isNaN(W)||isNaN(H)){clearAll("输入异常");return;}
-  const areaTy = (L+10+W+10+20)*2*(W+10+H+15+6)/1000000;
-  const areaJx = ((L+10+W+10)*2+40)*((W+10+H+15)+25)/1000000;
-  const areaHx = ((L+W+7)*2+35)*(W+H+7)/1000000;
-  document.getElementById('tyArea').innerText = areaTy.toFixed(4)+' ㎡';
-  document.getElementById('jxArea').innerText = areaJx.toFixed(4)+' ㎡';
-  document.getElementById('hxArea').innerText = areaHx.toFixed(4)+' ㎡';
-  const vals = {
-    tyD:!isNaN(tyDp)?areaTy*tyDp:null,
-    jxD:!isNaN(jxDp)?areaJx*jxDp:null,
-    hxD:!isNaN(hxDp)?areaHx*hxDp:null,
-    tyT:!isNaN(tyTp)?areaTy*tyTp:null,
-    jxT:!isNaN(jxTp)?areaJx*jxTp:null,
-    hxT:!isNaN(hxTp)?areaHx*hxTp:null
-  };
-  Object.keys(vals).forEach(k=>{
-    const el = document.getElementById(k);
-    el.innerText = vals[k]!==null ? '¥'+vals[k].toFixed(2) : '—';
-    el.classList.remove('cheapest');
-  })
-  highlightMin(['tyD','jxD','hxD'],vals);
-  highlightMin(['tyT','jxT','hxT'],vals);
-}
-function highlightMin(ids,data){
-  const arr = ids.filter(id=>data[id]!==null).map(id=>({id,val:data[id]}));
-  if(arr.length===0) return;
-  const min = Math.min(...arr.map(x=>x.val));
-  arr.filter(x=>Math.abs(x.val-min)<0.001).forEach(x=>{
-    document.getElementById(x.id).classList.add('cheapest');
-  })
-}
-function clearAll(txt){
-  ['tyArea','jxArea','hxArea'].forEach(id=>document.getElementById(id).innerText=txt);
-  ['tyD','jxD','hxD','tyT','jxT','hxT'].forEach(id=>{
-    const el = document.getElementById(id);
-    el.innerText = '—';
-    el.classList.remove('cheapest');
-  })
-}
-function calcPaper(){
-  const gram = parseFloat(document.getElementById('paperGram').value);
-  const wid = parseFloat(document.getElementById('paperWid').value);
-  const len = parseFloat(document.getElementById('paperLen').value);
-  const widAlt = parseFloat(document.getElementById('paperWidAlt').value);
-  const tonPrice = parseFloat(document.getElementById('paperPriceTon').value);
-  const qty = parseFloat(document.getElementById('paperQty').value);
-  if([gram,wid,len,widAlt,tonPrice,qty].some(isNaN)){renderPaperErr();return;}
-  const areaOrg = wid*len/1000000;
-  const tonOrg = areaOrg * gram * qty / 1000000;
-  const amtOrg = tonOrg * tonPrice;
-  const areaAlt = widAlt*len/1000000;
-  const tonAlt = areaAlt * gram * qty / 1000000;
-  const diffTon = Math.abs(tonOrg - tonAlt);
-  const diffAmt = diffTon * tonPrice;
-  const halfTon = (diffAmt/2 + amtOrg) / tonAlt;
-  const halfMoney = halfTon * tonAlt;
-  const bearMoney = ((tonAlt * tonPrice) / tonOrg) * tonOrg;
-  document.getElementById('paperTotalMoney').value = amtOrg.toFixed(2);
-  document.getElementById('halfMoney').value = halfMoney.toFixed(2);
-  document.getElementById('bearMoney').value = bearMoney.toFixed(2);
-  document.getElementById('paperResult').innerHTML = `
-    <div class="result-item"><span class="label">订单重量</span><span class="value">${tonOrg.toFixed(2)}<span class="unit">吨</span></span></div>
-    <div class="result-item"><span class="label">替代重量</span><span class="value">${tonAlt.toFixed(2)}<span class="unit">吨</span></span></div>
-    <div class="result-item"><span class="label">重量差异</span><span class="value text-red">${diffTon.toFixed(2)}<span class="unit">吨</span></span></div>
-    <div class="result-item accent"><span class="label">差价总额</span><span class="value text-red">${diffAmt.toFixed(2)}<span class="unit">元</span></span></div>
-    <div class="result-item accent"><span class="label">对半分摊吨价</span><span class="value">${halfTon.toFixed(2)}<span class="unit">元/吨</span></span></div>
-    <div class="result-item accent"><span class="label">我方承担吨价</span><span class="value">${(tonAlt * tonPrice / tonOrg).toFixed(2)}<span class="unit">元/吨</span></span>
-    </div>`;
-}
-function renderPaperErr(){
-  document.getElementById('paperTotalMoney').value = '';
-  document.getElementById('halfMoney').value = '';
-  document.getElementById('bearMoney').value = '';
-  document.getElementById('paperResult').innerHTML = `
-    <div class="result-item"><span class="label">订单重量</span><span class="value">输入异常</span></div>
-    <div class="result-item"><span class="label">替代重量</span><span class="value">—</span></div>
-    <div class="result-item"><span class="label">重量差异</span><span class="value text-red">—</span></div>
-    <div class="result-item accent"><span class="label">差价总额</span><span class="value text-red">—</span></div>
-    <div class="result-item accent"><span class="label">对半分摊吨价</span><span class="value">—</span></div>
-    <div class="result-item accent"><span class="label">我方承担吨价</span><span class="value">—</span>
-    </div>`;
-}
-document.querySelectorAll('input,select').forEach(el=>{
-  el.addEventListener('keydown',function(e){
-    if(e.key === 'Enter'){
-      if(document.getElementById('boxPage').classList.contains('show')) calcBox();
-      if(document.getElementById('paperPage').classList.contains('show')) calcPaper();
+    //计数器
+    let count = 0;
+    const counterDom = document.getElementById('counter');
+    function add(){
+        count++;
+        counterDom.innerText = count;
     }
-  })
-})
-window.onload = function(){}
+    function sub(){
+        count--;
+        counterDom.innerText = count;
+    }
+    function resetCount(){
+        count = 0;
+        counterDom.innerText = count;
+    }
+
+    //输入文字展示
+    function showText(){
+        const inputVal = document.getElementById('textInput').value;
+        document.getElementById('textOutput').innerText = `你输入的：${inputVal}`;
+    }
+
+    //修改背景
+    function changeBg(color){
+        document.body.style.backgroundColor = color;
+    }
+
+    //弹窗
+    function showAlert(){
+        alert("这是网页交互弹窗！");
+    }
 </script>
 </body>
 </html>
